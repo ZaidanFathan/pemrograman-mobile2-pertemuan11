@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "22568088380",
+    "project_id": "pemrograman-mobile2-runtime",
+    "storage_bucket": "pemrograman-mobile2-runtime.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:22568088380:android:5cef2caf9a1d4528856439",
+        "android_client_info": {
+          "package_name": "com.news_app.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGKwnNmNmpirTobUdgZ8kAKoDsOeCDJh8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
