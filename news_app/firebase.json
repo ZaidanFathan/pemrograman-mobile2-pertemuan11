@@ -1,1 +1,25 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"pemrograman-mobile2-runtime","appId":"1:22568088380:android:5cef2caf9a1d4528856439","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"pemrograman-mobile2-runtime","configurations":{"android":"1:22568088380:android:5cef2caf9a1d4528856439","ios":"1:22568088380:ios:ace86ad05bc72359856439","macos":"1:22568088380:ios:ace86ad05bc72359856439","web":"1:22568088380:web:677aa28940c7f39c856439","windows":"1:22568088380:web:661148bf43fde9b7856439"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "pemrograman-mobile2-runtime",
+          "appId": "1:22568088380:android:5cef2caf9a1d4528856439",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "pemrograman-mobile2-runtime",
+          "configurations": {
+            "android": "1:22568088380:android:5cef2caf9a1d4528856439",
+            "ios": "1:22568088380:ios:ace86ad05bc72359856439",
+            "macos": "1:22568088380:ios:ace86ad05bc72359856439",
+            "web": "1:22568088380:web:677aa28940c7f39c856439",
+            "windows": "1:22568088380:web:661148bf43fde9b7856439"
+          }
+        }
+      }
+    }
+  }
+}

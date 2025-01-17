@@ -48,7 +48,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '22568088380',
     projectId: 'pemrograman-mobile2-runtime',
     authDomain: 'pemrograman-mobile2-runtime.firebaseapp.com',
-    storageBucket: 'pemrograman-mobile2-runtime.firebasestorage.app',
+    storageBucket: 'mobilezaidan-798df.appspot.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -56,7 +56,7 @@ class DefaultFirebaseOptions {
     appId: '1:22568088380:android:5cef2caf9a1d4528856439',
     messagingSenderId: '22568088380',
     projectId: 'pemrograman-mobile2-runtime',
-    storageBucket: 'pemrograman-mobile2-runtime.firebasestorage.app',
+    storageBucket: 'mobilezaidan-798df.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -64,7 +64,7 @@ class DefaultFirebaseOptions {
     appId: '1:22568088380:ios:ace86ad05bc72359856439',
     messagingSenderId: '22568088380',
     projectId: 'pemrograman-mobile2-runtime',
-    storageBucket: 'pemrograman-mobile2-runtime.firebasestorage.app',
+    storageBucket: 'mobilezaidan-798df.appspot.com',
     iosBundleId: 'com.example.newsApp',
   );
 
@@ -73,7 +73,7 @@ class DefaultFirebaseOptions {
     appId: '1:22568088380:ios:ace86ad05bc72359856439',
     messagingSenderId: '22568088380',
     projectId: 'pemrograman-mobile2-runtime',
-    storageBucket: 'pemrograman-mobile2-runtime.firebasestorage.app',
+    storageBucket: 'mobilezaidan-798df.appspot.com',
     iosBundleId: 'com.example.newsApp',
   );
 
@@ -83,6 +83,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '22568088380',
     projectId: 'pemrograman-mobile2-runtime',
     authDomain: 'pemrograman-mobile2-runtime.firebaseapp.com',
-    storageBucket: 'pemrograman-mobile2-runtime.firebasestorage.app',
+    storageBucket: 'mobilezaidan-798df.appspot.com',
   );
 }
