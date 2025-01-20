@@ -6,7 +6,10 @@ import 'package:flutter/material.dart';
 import 'firebase_options.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:appinio_social_share/appinio_social_share.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 
+// import 'package';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -111,13 +114,11 @@ class SeeAllFiles extends StatelessWidget {
                     String downloadUrl = downloadSnapshot.data!;
 
                     return ListTile(
-                      leading: Image.network(
-                        downloadUrl,
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            'https://t3.ftcdn.net/jpg/06/34/80/20/360_F_634802094_qtHEQh9cJxc8bzzUpIVfiTqmzFBRT3zm.jpg'),
                       ),
-                      title: Text(downloadUrl),
+                      title: Text(fileRef.name),
                     );
                   }
 
@@ -360,14 +361,25 @@ void _showAlertDialog(
       });
 }
 
+// Add this package to your pubspec.yaml
+
 class DetailNewsRoute extends StatelessWidget {
-  final news;
+  final Map<String, dynamic> news; // Ensure `news` has a specific type
 
   DetailNewsRoute({required this.news});
+  final AppinioSocialShare appinioSocialShare = AppinioSocialShare();
+  // Function to share the news to WhatsApp
+  void shareToWhatsApp(String message) async {
+    try {
+      await appinioSocialShare.android.shareToWhatsapp(message, null);
+    } catch (e) {
+      print("Error sharing to WhatsApp: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Get the screen width to make the image responsive
+    // Get the screen dimensions for responsive design
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double imageHeight = screenWidth * 0.5;
@@ -415,28 +427,30 @@ class DetailNewsRoute extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 8),
-                  Text('${news['description']}'),
-                  SizedBox(height: 8),
                   // Description
                   Text(
-                    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-                    maxLines: 4,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
+                    "${news['description']}",
+                    style: TextStyle(fontSize: 17),
                   ),
                   SizedBox(height: 8),
-
-                  Text(
-                    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-                    maxLines: 4,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
                 ],
+              ),
+            ),
+            Spacer(),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    // Construct the message to share
+                    String message =
+                        "${news['title']}\n\n${news['description']}\n\nCheck out this news!";
+                    shareToWhatsApp(message);
+                  },
+                  label: Text("Share to WhatsApp"),
+                  icon: Icon(Icons.message),
+                ),
               ),
             ),
           ],
@@ -610,6 +624,9 @@ class AddNewsRoute extends StatelessWidget {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+  Future<void> _handleRefresh() async {
+    return await Future.delayed(Duration(seconds: 2));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -621,146 +638,159 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.blueAccent,
-          title: const Text("News App", style: TextStyle(color: Colors.white)),
-          centerTitle: true,
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: StreamBuilder<List<Map<String, dynamic>>>(
-                  stream: fetchNewsRealtime(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    }
-                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(child: Text('No News Found'));
-                    }
-                    final news = snapshot.data!;
-                    // print(snapshot.data![0]);
-                    return ListView.builder(
-                      itemCount: news.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                'https://t3.ftcdn.net/jpg/06/34/80/20/360_F_634802094_qtHEQh9cJxc8bzzUpIVfiTqmzFBRT3zm.jpg'),
-                          ),
-                          trailing: Wrap(
-                            spacing: 12,
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.remove_red_eye_sharp),
-                                onPressed: () {
-                                  // print("detail button");
-                                  // print(news[index]);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => DetailNewsRoute(
-                                                news: news[index],
-                                              )));
-                                },
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.delete),
-                                onPressed: () {
-                                  deleteNews(news[index], context);
-                                },
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.edit),
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => UpdateNewsRoute(
-                                                articleId: news[index]['id'],
-                                                news: news[index],
-                                              )));
-                                },
-                              ),
-                            ],
-                          ),
-                          title: Text(news[index]['title'] ?? "No Title"),
-                          subtitle: Text(
-                            news[index]['description'] ?? "No Description",
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: ElevatedButton.icon(
-                  label: Text(
-                    "Add more news",
-                    style: TextStyle(color: Colors.white70),
-                  ),
-                  icon: Icon(
-                    Icons.add,
-                    color: Colors.white70,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => AddNewsRoute()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: ElevatedButton.icon(
-                  label: Text(
-                    "Upload image",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white70),
-                  ),
-                  icon: Icon(
-                    Icons.camera_alt,
-                    color: Colors.white70,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => UploadImageBody(
-                                storageRef: FirebaseStorage.instance.ref(),
-                              )),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+          appBar: AppBar(
+            backgroundColor: Colors.blueAccent,
+            title:
+                const Text("News App", style: TextStyle(color: Colors.white)),
+            centerTitle: true,
           ),
-        ),
-      ),
+          body: LiquidPullToRefresh(
+              color: Colors.blue,
+              height: 300,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: StreamBuilder<List<Map<String, dynamic>>>(
+                        stream: fetchNewsRealtime(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                          if (snapshot.hasError) {
+                            return Center(
+                                child: Text('Error: ${snapshot.error}'));
+                          }
+                          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                            return const Center(child: Text('No News Found'));
+                          }
+                          final news = snapshot.data!;
+                          // print(snapshot.data![0]);
+                          return ListView.builder(
+                            itemCount: news.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                      'https://t3.ftcdn.net/jpg/06/34/80/20/360_F_634802094_qtHEQh9cJxc8bzzUpIVfiTqmzFBRT3zm.jpg'),
+                                ),
+                                trailing: Wrap(
+                                  spacing: 12,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(Icons.remove_red_eye_sharp),
+                                      onPressed: () {
+                                        // print("detail button");
+                                        // print(news[index]);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DetailNewsRoute(
+                                                      news: news[index],
+                                                    )));
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.delete),
+                                      onPressed: () {
+                                        deleteNews(news[index], context);
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.edit),
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    UpdateNewsRoute(
+                                                      articleId: news[index]
+                                                          ['id'],
+                                                      news: news[index],
+                                                    )));
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                title: Text(news[index]['title'] ?? "No Title"),
+                                subtitle: Text(
+                                  news[index]['description'] ??
+                                      "No Description",
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton.icon(
+                        label: Text(
+                          "Add more news",
+                          style: TextStyle(color: Colors.white70),
+                        ),
+                        icon: Icon(
+                          Icons.add,
+                          color: Colors.white70,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AddNewsRoute()),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blueAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton.icon(
+                        label: Text(
+                          "Upload image",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white70),
+                        ),
+                        icon: Icon(
+                          Icons.camera_alt,
+                          color: Colors.white70,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => UploadImageBody(
+                                      storageRef:
+                                          FirebaseStorage.instance.ref(),
+                                    )),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blueAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              onRefresh: _handleRefresh)),
     );
   }
 }
